@@ -1,0 +1,85 @@
+Metadata-Version: 2.2
+Name: meta-predictor
+Version: 1.0.0
+Summary: A Python package for metabolite prediction using transformer models
+Home-page: https://github.com/yourusername/meta-predictor
+Author: Meta-Predictor Team
+Author-email: your.email@example.com
+Project-URL: Bug Reports, https://github.com/yourusername/meta-predictor/issues
+Project-URL: Source, https://github.com/yourusername/meta-predictor
+Project-URL: Documentation, https://meta-predictor.readthedocs.io/
+Keywords: metabolite prediction chemistry transformer neural machine translation
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Science/Research
+Classifier: Topic :: Scientific/Engineering :: Chemistry
+Classifier: Topic :: Scientific/Engineering :: Bio-Informatics
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+License-File: LICENSE
+License-File: LICENSE_Opennmt.md
+Requires-Dist: rdkit
+Requires-Dist: numpy>=1.21.0
+Requires-Dist: pandas>=1.3.0
+Requires-Dist: tqdm>=4.60.0
+Provides-Extra: dev
+Requires-Dist: pytest>=6.0; extra == "dev"
+Requires-Dist: pytest-cov>=2.0; extra == "dev"
+Requires-Dist: black>=21.0; extra == "dev"
+Requires-Dist: flake8>=3.8; extra == "dev"
+Provides-Extra: web
+Requires-Dist: fastapi>=0.68.0; extra == "web"
+Requires-Dist: uvicorn>=0.15.0; extra == "web"
+Provides-Extra: viz
+Requires-Dist: matplotlib>=3.0; extra == "viz"
+Requires-Dist: pillow>=8.0; extra == "viz"
+Dynamic: author
+Dynamic: author-email
+Dynamic: classifier
+Dynamic: description
+Dynamic: description-content-type
+Dynamic: home-page
+Dynamic: keywords
+Dynamic: project-url
+Dynamic: provides-extra
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary
+
+# MetaPredictor
+MetaPredictor is a  end-to-end , prompt-based and transformer-base tool to predict human metabolites for small molecules. The methodology is described in detain in the paper _MetaPredictor: _in silico_ prediction of drug metabolites based on deep language models with prompt engineering_. The implementation of the Transformer model is based on the [OpenNMT toolkit](http://opennmt.net/OpenNMT-py/). The reaction data is processed based on the [RDKit](https://www.rdkit.org/) software. The similarity calculations is based on RDKFingerprint.
+
+
+## Installation
+Create a conda environment:
+```
+conda create -n metapredictor python=3.8
+source activate metapredictor
+conda install rdkit 
+conda install pytorch=1.13.0
+pip install OpenNMT-py==2.3.0
+pip install pandas
+```
+
+## Predicting drug metabolites
+### Download trained models
+Step 1: Download the trained models from the folder ./model. And create two folders with paths ./model/SoM_identifier and ./model/metabolite_predictor to store the models separately.
+
+### Prepare parent drug
+
+Step 2: Prepare a csv file with the name or id of the parent compound in the first column and SMILES in the second column ( Example files can refer to input.csv ).Then canonicalise and tokenise SMILES of parent drug:
+```
+python prepare_input_file.py -input_file input.csv -output_file processed_data.txt
+```
+###  Translate and Get predictions
+
+Step 3: Use the bash file to transalte and get predictions: you can choose different bash file according to the number of predicted metabolite needed. Each bash file has three parameters. You need to define the source file (processed_data.txt , same as the output file in step 2) for the first parameter. For the second parameter, You need to define the file path where the predictions will be saved. In the prediction files, you can get three files, two txt files store the predicted SoM and metabolite information, one csv stores parent compound names, SMILES and predicted metabolites. For the third parameter, you need to define the input file (same as the input file in step 2). If you want not to visualise predicted metabolites, you can change the visualise_predictions parameter in the last line of bash file. The user can also define the min and max length of the predicted SMILES sequences, number of predicted SoMs and number of predicted metabolites ( n_best ).
+```
+./predict-top1.sh  src_file  prediction_file_path  input_file
+./predict-top1.sh  processed_data.txt  ./prediction  input.csv
+```

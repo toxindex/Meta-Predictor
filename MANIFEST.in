@@ -1,0 +1,10 @@
+include README.md
+include README_PACKAGE.md
+include LICENSE
+include requirements.txt
+include requirements_pip.txt
+recursive-include meta_predictor *.py
+recursive-include model *.pt
+recursive-include onmt *.py
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
